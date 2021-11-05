@@ -27,7 +27,7 @@ namespace Week5_Laura_Gagliani
                 {
                     Console.WriteLine("\nSeleziona dal menu:");
                     choice = Console.ReadKey().KeyChar;
-                } while (!(choice == '0' || choice == '1' || choice == '2' || choice == 'x'));
+                } while (!(choice == '1' || choice == '2' || choice == 'x'));
 
 
 
