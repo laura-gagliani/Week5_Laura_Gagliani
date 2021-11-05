@@ -9,7 +9,7 @@ namespace Week5_Laura_Gagliani
 {
     public static class GestioneCarriera
     {
-        //static List<Studente> studentiIscritti = new List<Studente>();
+        public static List<Studente> studentiIscritti = new List<Studente>();  // generica lista di iscritti all'università
 
         internal static void CaricaDati()
         {
@@ -19,14 +19,17 @@ namespace Week5_Laura_Gagliani
             CdL cdlMedicina = new CdL { Codice = "LM-41", Nome = "Medicina", AnniDurata = 6, TotaleCFU = 360 };
 
             // studenti (immatr. e iscrizione a relativi corsi)
-            Studente sSto = new Studente { Matricola = 42, Nome = "Cosimo", Cognome = "Bianchini", AnnoNascita = 1999,/* RichiestaLaurea = true, CFUAccumulati = 180,*/ CodiceCdL = "L-42", CdL = cdlStoria};
-            Studente sMat = new Studente { Matricola = 40, Nome = "Sara", Cognome = "Giannini", AnnoNascita = 1993, /*RichiestaLaurea = false, CFUAccumulati = 240,*/ CodiceCdL = "LM-40", CdL = cdlMatematica};
-            Studente sMed = new Studente { Matricola = 41, Nome = "Caterina", Cognome = "Cipriani", AnnoNascita = 2001, /*RichiestaLaurea = false, CFUAccumulati = 120,*/ CodiceCdL = "LM-41" , CdL = cdlMedicina};
+            Studente sSto = new Studente { Matricola = 1, Nome = "Cosimo", Cognome = "Bianchini", AnnoNascita = 1999,/* RichiestaLaurea = true, CFUAccumulati = 180,*/ CodiceCdL = "L-42", CdL = cdlStoria};
+            Studente sMat = new Studente { Matricola = 2, Nome = "Sara", Cognome = "Giannini", AnnoNascita = 1993, /*RichiestaLaurea = false, CFUAccumulati = 240,*/ CodiceCdL = "LM-40", CdL = cdlMatematica};
+            Studente sMed = new Studente { Matricola = 3, Nome = "Caterina", Cognome = "Cipriani", AnnoNascita = 2001, /*RichiestaLaurea = false, CFUAccumulati = 120,*/ CodiceCdL = "LM-41" , CdL = cdlMedicina};
 
             cdlMatematica.StudentiIscritti.Add(sMat);
             cdlStoria.StudentiIscritti.Add(sSto);
             cdlMedicina.StudentiIscritti.Add(sMed); // a questo punto ogni stud ha il suo corso (fk e nav property), gli mancano gli esami in carriera
-            
+
+            studentiIscritti.Add(sMat);
+            studentiIscritti.Add(sMed);
+            studentiIscritti.Add(sSto); 
 
             //creazione e assegnazione corsi ai vari corsi di laurea
             Corso cMat1 = new Corso { Id = 4001, Nome = "Algebra lineare", CFU = 60, CodiceCdL = "LM-40", CdL = cdlMatematica };
@@ -71,20 +74,111 @@ namespace Week5_Laura_Gagliani
             sSto.EsamiStudente.Add(cSto1, true);
             sSto.EsamiStudente.Add(cSto2, true); 
             sSto.CFUAccumulati = CalcolaCFUaccumulati(sSto);
-            sSto.RichiestaLaurea = ValutaRichiestaLaurea(sSto); // 120, no
+            sSto.RichiestaLaurea = ValutaRichiestaLaurea(sSto);
 
             sMat.EsamiStudente.Add(cMat1, true);
-            sMat.EsamiStudente.Add(cMat2, false);
+            sMat.EsamiStudente.Add(cMat2, true);
             sMat.EsamiStudente.Add(cMat3, true);
             sMat.CFUAccumulati = CalcolaCFUaccumulati(sMat);
-            sMat.RichiestaLaurea = ValutaRichiestaLaurea(sMat); // 120, no
+            sMat.RichiestaLaurea = ValutaRichiestaLaurea(sMat); 
 
             sMed.EsamiStudente.Add(cMed1, true);
             sMed.EsamiStudente.Add(cMed2, true);
             sMed.EsamiStudente.Add(cMed3, true);
             sMed.CFUAccumulati = CalcolaCFUaccumulati(sMed);
-            sMed.RichiestaLaurea = ValutaRichiestaLaurea(sMed); // 240, no
+            sMed.RichiestaLaurea = ValutaRichiestaLaurea(sMed); 
 
+
+        }
+
+        internal static void AggiungiEsameAStudente(Studente studente, Corso esame)
+        {
+            studente.EsamiStudente.Add(esame, false);
+        }
+
+        internal static bool ControllaEsame(int codiceEsame, Studente studente, out Corso esame)
+        {
+
+            foreach (var item in studente.CdL.CorsiAssociati)
+            {
+                if (item.Id == codiceEsame)
+                {
+                    esame = item;
+                    return true;
+                }
+            }
+            esame = null;
+            return false;
+        }
+
+        internal static Studente GetStudenteByMatricola(int matricola)
+        {
+            foreach (var item in studentiIscritti)
+            {
+                if (matricola == item.Matricola)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        internal static void StampaCorsiPerCdL(Studente studente)
+        {
+            foreach (var item in studente.CdL.CorsiAssociati)
+            {
+                Console.WriteLine($" {item.Id} - {item.Nome}");
+            }
+        }
+
+        internal static bool ControllaIscrizione(int matricola)
+        {
+            foreach (var item in studentiIscritti)
+            {
+                if (matricola == item.Matricola)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool ControllaRequisiti(Studente studente, Corso esame)
+        {
+            //requisiti prenotazione (tre booleani)
+            // check richiestalaurea
+            // esame non già in lista studente
+            // CFU non sforano
+            bool bool1 = true;
+            bool bool2 = true;
+            bool bool3= true;
+
+            if (studente.RichiestaLaurea)
+            {
+                bool1 = false;
+            }
+
+            foreach (var item in studente.EsamiStudente)
+            {
+                if (item.Key.Id == esame.Id)
+                {
+                    bool2 = false;
+                }
+            }
+
+            int cfu = studente.CFUAccumulati + esame.CFU;
+
+            if (cfu > studente.CdL.TotaleCFU)
+            {
+                bool3 = false;
+            }
+
+            if (bool1 && bool2 && bool3)
+            {
+                return true;
+            }
+
+            else return false;
 
         }
 
