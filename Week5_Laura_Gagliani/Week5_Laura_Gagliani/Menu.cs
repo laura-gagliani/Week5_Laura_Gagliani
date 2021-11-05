@@ -12,14 +12,14 @@ namespace Week5_Laura_Gagliani
         internal static void Start()
         {
             GestioneCarriera.CaricaDati();
-            
+
             bool quit = false;
             do
             {
                 Console.WriteLine("\n--------------- MENU GESTIONE CARRIERA ---------------");
                 Console.WriteLine("[1] Prenotazione esami");
-                Console.WriteLine("[2] Verbalizzazione esami"); 
-                
+                Console.WriteLine("[2] Verbalizzazione esami");
+
                 Console.WriteLine("\n[x] Esci");
 
                 char choice;
@@ -27,7 +27,7 @@ namespace Week5_Laura_Gagliani
                 {
                     Console.WriteLine("\nSeleziona dal menu:");
                     choice = Console.ReadKey().KeyChar;
-                } while (!(choice == '0' || choice == '1' || choice == '2' || choice == 'x' ));
+                } while (!(choice == '0' || choice == '1' || choice == '2' || choice == 'x'));
 
 
 
@@ -37,8 +37,9 @@ namespace Week5_Laura_Gagliani
                         PrenotaEsame();
                         break;
                     case '2':
+                        VerbalizzaEsame();
                         break;
-                    
+
                     case 'x':
                         quit = true;
                         Console.WriteLine("\nChiusura in corso...");
@@ -47,6 +48,53 @@ namespace Week5_Laura_Gagliani
             } while (!quit);
         }
 
+        private static void VerbalizzaEsame()
+        {
+
+            int matricola = InserisciMatricola();
+            Studente studente = GestioneCarriera.GetStudenteByMatricola(matricola);
+            int count = 0;
+            string verbalizzato = "";
+            Console.WriteLine("\nVerbalizzato - Codice - Nome");
+            Console.WriteLine("------------------------------------------------");
+            foreach (var item in studente.EsamiStudente)
+            {
+                if (item.Value)
+                {
+                    verbalizzato = "Sì";
+                }
+                else if (!item.Value)
+                {
+                    verbalizzato = "No";
+                    count++;
+                }
+                Console.WriteLine($"\t{verbalizzato}\t{item.Key.Id}\t{item.Key.Nome} ");
+            }
+
+            if (count == 0)
+            {
+                Console.WriteLine("\nTutti i tuoi esami sono correttamente verbalizzati!");
+            }
+
+            else
+            {
+                Corso esame = SelezionaEsamePerVerbalizzazione(studente);
+                GestioneCarriera.Verbalizza(esame, studente);
+                Console.WriteLine("Il tuo esame è stato verbalizzato con successo!");
+            }
+
+            //if (sottolista.Count = 0)
+            //{
+
+            //}
+            //seleziono:
+            //mettigli true
+            // ricalcola cfu
+            // ricalcola richiesta laurea
+        }
+
+        
+
         private static void PrenotaEsame()
         {
             int matricola = InserisciMatricola();
@@ -54,21 +102,53 @@ namespace Week5_Laura_Gagliani
             Corso esame = SelezionaEsame(studente);
 
             bool requisiti = GestioneCarriera.ControllaRequisiti(studente, esame);
-            
+
 
             if (requisiti)
             {
                 Console.WriteLine("\nHai tutti i requisiti per prenotarti a questo esame");
                 GestioneCarriera.AggiungiEsameAStudente(studente, esame);
-                Console.WriteLine("\nL'esame è stato prenotato");
+                Console.WriteLine("\nL'esame è stato prenotato con successo");
             }
 
             else
             {
                 Console.WriteLine("\nErrore! Non puoi prenotarti a questo esame");
+                
             }
         }
+        private static Corso SelezionaEsamePerVerbalizzazione(Studente studente)
+        {
+            int codiceEsame;
+            bool isInt;
+            bool isCorrect;
+            Corso esame;
+            do
+            {
+                Console.WriteLine("\nDigita il codice dell'esame che vuoi verbalizzare:");
+                isInt = int.TryParse(Console.ReadLine(), out codiceEsame);
+            } while (!isInt);
 
+            isCorrect = GestioneCarriera.ControllaSceltaVerbalizzazione(codiceEsame, studente, out esame);
+
+            if (!isCorrect)
+            {
+                do
+                {
+                    Console.WriteLine("\nErrore! Esame selezionato non corretto");
+                    do
+                    {
+                        Console.WriteLine("\nInserisci un nuovo codice:");
+                        isInt = int.TryParse(Console.ReadLine(), out codiceEsame);
+                    } while (!isInt);
+                    isCorrect = GestioneCarriera.ControllaSceltaVerbalizzazione(codiceEsame, studente, out esame);
+                } while (!isCorrect);
+
+            }
+
+            Console.WriteLine("\nInserimento corretto!");
+            return esame;
+        }
         private static Corso SelezionaEsame(Studente studente)
         {
             Console.WriteLine("\nGli esami del tuo corso di laurea sono:");
@@ -102,7 +182,7 @@ namespace Week5_Laura_Gagliani
 
             Console.WriteLine("\nInserimento corretto!");
             return esame;
-        }
+        } //seleziona l'esame da prenotare
 
         private static int InserisciMatricola() //chiede input e controlla che sia in elenco
         {
@@ -130,7 +210,7 @@ namespace Week5_Laura_Gagliani
                     } while (!isInt);
                     isIscritto = GestioneCarriera.ControllaIscrizione(matricola);
                 } while (!isIscritto);
-                
+
 
             }
 

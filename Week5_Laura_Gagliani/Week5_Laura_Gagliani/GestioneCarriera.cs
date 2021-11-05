@@ -91,6 +91,45 @@ namespace Week5_Laura_Gagliani
 
         }
 
+        internal static void Verbalizza(Corso esame, Studente studente)
+        {
+            studente.EsamiStudente[esame] = true;
+            studente.CFUAccumulati = CalcolaCFUaccumulati(studente);
+            studente.RichiestaLaurea = ValutaRichiestaLaurea(studente);
+
+        }
+
+        internal static bool ControllaSceltaVerbalizzazione(int codiceEsame, Studente studente, out Corso esame)
+        {
+            bool esameInLista = false;
+            bool nonVerbalizzato = false;
+            esame = null;
+            
+
+            foreach (var item in studente.EsamiStudente)
+            {
+                if (codiceEsame == item.Key.Id)
+                {
+                    esameInLista = true;
+                    var placeholder = item;
+
+                    if (!placeholder.Value)
+                    {
+                        nonVerbalizzato = true;
+                        esame = placeholder.Key;
+                    }
+                }
+            }
+
+            
+            if (esameInLista && nonVerbalizzato)
+            {
+                return true;
+            }
+
+            else return false;
+        }
+
         internal static void AggiungiEsameAStudente(Studente studente, Corso esame)
         {
             studente.EsamiStudente.Add(esame, false);
