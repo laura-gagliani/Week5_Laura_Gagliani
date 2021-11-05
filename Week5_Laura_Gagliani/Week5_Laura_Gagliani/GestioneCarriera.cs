@@ -182,7 +182,7 @@ namespace Week5_Laura_Gagliani
             return false;
         }
 
-        internal static bool ControllaRequisiti(Studente studente, Corso esame)
+        internal static bool ControllaRequisiti(Studente studente, Corso esame, List<string> motivi)
         {
             //requisiti prenotazione (tre booleani)
             // check richiestalaurea
@@ -195,6 +195,7 @@ namespace Week5_Laura_Gagliani
             if (studente.RichiestaLaurea)
             {
                 bool1 = false;
+                motivi.Add("- Hai già effettuato la tua richiesta di laurea");
             }
 
             foreach (var item in studente.EsamiStudente)
@@ -202,6 +203,7 @@ namespace Week5_Laura_Gagliani
                 if (item.Key.Id == esame.Id)
                 {
                     bool2 = false;
+                    motivi.Add("- Questo esame è già in lista");
                 }
             }
 
@@ -210,6 +212,7 @@ namespace Week5_Laura_Gagliani
             if (cfu > studente.CdL.TotaleCFU)
             {
                 bool3 = false;
+                motivi.Add("- Non puoi superare il numero di CFU totali del tuo corso di laurea");
             }
 
             if (bool1 && bool2 && bool3)

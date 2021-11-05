@@ -100,8 +100,8 @@ namespace Week5_Laura_Gagliani
             int matricola = InserisciMatricola();
             Studente studente = GestioneCarriera.GetStudenteByMatricola(matricola);
             Corso esame = SelezionaEsame(studente);
-
-            bool requisiti = GestioneCarriera.ControllaRequisiti(studente, esame);
+            List<string> motivi = new List<string>();
+            bool requisiti = GestioneCarriera.ControllaRequisiti(studente, esame, motivi);
 
 
             if (requisiti)
@@ -113,7 +113,11 @@ namespace Week5_Laura_Gagliani
 
             else
             {
-                Console.WriteLine("\nErrore! Non puoi prenotarti a questo esame");
+                Console.WriteLine("\nErrore:");
+                foreach (var item in motivi)
+                {
+                    Console.WriteLine(item);
+                }
                 
             }
         }
