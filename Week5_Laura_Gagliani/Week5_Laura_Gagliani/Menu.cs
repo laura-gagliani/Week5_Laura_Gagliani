@@ -10,6 +10,8 @@ namespace Week5_Laura_Gagliani
     {
         internal static void Start()
         {
+            GestioneCarriera.CaricaDati();
+            
             bool quit = false;
             do
             {

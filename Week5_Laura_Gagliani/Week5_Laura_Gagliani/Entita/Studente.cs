@@ -21,8 +21,6 @@ namespace Week5_Laura_Gagliani.Entita
         public CdL CdL { get; set; }
 
 
-        Studente sSto = new Studente { Matricola = 42, Nome = "Cosimo", Cognome = "Bianchini", AnnoNascita = 1999, RichiestaLaurea = true, CFUAccumulati = 180, CodiceCdL = "L-42" };
-        Studente sMat = new Studente { Matricola = 40, Nome = "Sara", Cognome = "Giannini", AnnoNascita = 1993, RichiestaLaurea = false, CFUAccumulati = 240, CodiceCdL = "LM-40" };
-        Studente sMed = new Studente { Matricola = 41, Nome = "Caterina", Cognome = "Cipriani", AnnoNascita = 2001, RichiestaLaurea = false, CFUAccumulati = 120, CodiceCdL = "LM-41" };
+       
     }
 }
