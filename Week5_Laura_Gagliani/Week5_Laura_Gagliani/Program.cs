@@ -6,7 +6,8 @@ namespace Week5_Laura_Gagliani
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Menu.Start();
+
         }
     }
 }
